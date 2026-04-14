@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Mashup | Dashboard Unificado</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="navbar-custom sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="navbar-brand">APIs Mashup</span>
+      <div class="navbar-deco hidden sm:block"></div>
+      <span class="navbar-badge hidden sm:inline-flex">✨ integración fluida</span>
+    </div>
+    <div class="navbar-icon-group">
+      <div class="navbar-sub">unified · realtime</div>
+      <div class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center shadow-sm border border-slate-200/80">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-7xl mx-auto px-5 py-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    
+    <div class="dashboard-card card-geo">
+      <div class="card-header-custom"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2c-4.2 0-8 3.22-8 8.2 0 3.32 2.67 7.25 8 11.8 5.33-4.55 8-8.48 8-11.8 0-4.98-3.8-8.2-8-8.2z"/><circle cx="12" cy="10" r="3"/></svg><span>Ubicación en tiempo real</span></div>
+      <div class="card-body">
+        <div id="leaflet-map"></div>
+        <div class="grid grid-cols-3 gap-2">
+          <div class="stat-mini"><span class="text-[10px]">latitud</span><p class="text-sm font-mono font-semibold" id="disp-lat">25.5535</p></div>
+          <div class="stat-mini"><span class="text-[10px]">longitud</span><p class="text-sm font-mono font-semibold" id="disp-lon">-100.932</p></div>
+          <div class="stat-mini"><span class="text-[10px]">precisión</span><p class="text-sm font-mono font-semibold" id="disp-acc">---</p></div>
+        </div>
+        <div class="flex gap-2"><input class="input-soft flex-1" id="geo-input" placeholder="Buscar lugar..."/><button class="btn-card btn-geo" onclick="geoSearch()">🔍</button></div>
+        <div class="flex flex-wrap gap-2 justify-center"><button class="btn-card btn-geo text-[11px]" onclick="geoFilter('supermercado')">🛒 Super</button><button class="btn-card btn-geo text-[11px]" onclick="geoFilter('hospital')">🏥 Hospital</button><button class="btn-card btn-geo text-[11px]" onclick="geoFilter('restaurante')">🍔 Resto</button><button class="btn-card btn-geo text-[11px]" onclick="getMyLocation()">📍 Mi ubicación</button></div>
+      </div>
+    </div>
+
+    <div class="dashboard-card card-itunes">
+      <div class="card-header-custom"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span>iTunes Search · Preview</span></div>
+      <div class="card-body">
+        <iframe style="border-radius:16px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M" width="100%" height="100" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen" loading="lazy"></iframe>
+        <div class="flex gap-2"><input id="itunes-search" class="input-soft" placeholder="Canción o álbum..." value="BTS"/><button class="btn-card btn-itunes" onclick="itunesSearch()">Buscar</button></div>
+        <div class="flex gap-2 p-1 rounded-xl"><button class="itunes-tab flex-1 py-1 text-xs font-medium rounded-lg transition active" id="tab-song" onclick="itunesSetType('song')">🎵 Canciones</button><button class="itunes-tab flex-1 py-1 text-xs font-medium rounded-lg transition" id="tab-album" onclick="itunesSetType('album')">💿 Álbumes</button></div>
+        <div id="itunes-list" class="scroll-list"><div class="flex justify-center py-4"><div class="animate-spin w-5 h-5 border-2 border-rose-300 border-t-rose-600 rounded-full"></div></div></div>
+        <div id="itunes-detail" class="hidden flex-col gap-2"><button onclick="itunesBackToList()" class="btn-card btn-itunes w-fit text-xs">← Volver</button><div class="flex gap-3"><img id="it-d-img" class="w-12 h-12 rounded-xl"/><div><p id="it-d-name" class="font-semibold text-sm"></p><p id="it-d-artist" class="text-xs text-rose-700"></p><a id="it-d-link" href="#" target="_blank" class="text-[10px] text-indigo-600">Abrir en Apple Music</a></div></div><div id="it-preview" class="hidden"><audio id="it-audio" controls style="width:100%; height:32px"></audio></div></div>
+      </div>
+    </div>
+
+    <div class="dashboard-card card-ecommerce">
+      <div class="card-header-custom"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18l-2 13H5L3 6z"/><path d="M8 6V4c0-1 1-2 3-2s3 1 3 2v2"/></svg><span>Catálogo · e‑commerce</span></div>
+      <div class="card-body">
+        <div class="grid grid-cols-2 gap-2"><div class="stat-mini"><p class="text-[10px]">productos</p><p class="font-bold text-emerald-800" id="product-count">0</p></div><div class="stat-mini"><p class="text-[10px]">categorías</p><p class="text-xs font-semibold" id="cat-count">-</p></div></div>
+        <div class="flex gap-2"><input id="product-search" class="input-soft flex-1" placeholder="Buscar producto..." onkeyup="filterProducts()"/><select id="category-select" class="input-soft flex-1 text-sm" onchange="filterProducts()"><option value="">Todas</option></select><button class="btn-card btn-ecommerce" onclick="loadProducts()">↻</button></div>
+        <div id="product-list" class="scroll-list"><div class="flex justify-center py-4"><div class="animate-spin w-5 h-5 border-2 border-teal-400 border-t-teal-700 rounded-full"></div></div></div>
+        <div id="product-detail" class="hidden"><button onclick="productBackToList()" class="btn-card btn-ecommerce text-xs">← Volver</button><div class="flex gap-3 mt-2"><img id="prod-img" class="w-16 h-16 object-contain"/><div><p id="prod-title" class="font-semibold text-xs product-title"></p><p id="prod-price" class="text-sm font-bold text-emerald-800"></p><p id="prod-cat" class="text-[10px] text-slate-600"></p></div></div></div>
+      </div>
+    </div>
+
+    <div class="dashboard-card card-github">
+      <div class="card-header-custom"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48c-1.37-.38-2.84-.38-4.21 0C9.27.65 8.09 1 8.09 1A5.07 5.07 0 0 0 8 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 12 18.13V22"/></svg><span>GitHub · esmessar</span></div>
+      <div class="card-body">
+        <div class="flex gap-2"><input id="github-username" class="input-soft" placeholder="usuario" value="esmessar"/><button class="btn-card btn-github" onclick="buscarGithub()">🔍</button></div>
+        <div id="github-result" class="github-profile hidden"></div>
+        <div class="grid grid-cols-2 gap-2"><div class="stat-mini"><p class="text-[10px]">nombre</p><p class="font-medium text-sm text-white" id="gh-name">---</p></div><div class="stat-mini"><p class="text-[10px]">repositorios</p><p class="font-bold text-lg text-white" id="gh-repos">0</p></div></div>
+        <div class="text-[10px] text-slate-300">Perfil público · sin token</div>
+      </div>
+    </div>
+
+    <div class="dashboard-card card-firestore">
+      <div class="card-header-custom"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9h12M6 15h6M9 3v3m6-3v3"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg><span>Firestore · Usuarios</span></div>
+      <div class="card-body">
+        <div class="stat-mini text-center mb-1"><span class="text-[10px]">documentos</span><p class="font-bold text-amber-700 text-xl" id="db-count">0</p></div>
+        <div class="grid grid-cols-2 gap-2"><input class="input-soft" id="db-nombre" placeholder="👤 Nombre de usuario"/><input class="input-soft" id="db-bio" placeholder="Biografía"/></div>
+        <div class="flex gap-2"><button class="btn-card btn-firestore flex-1" onclick="dbInsert()">➕ Guardar perfil</button><button class="btn-secondary-card" onclick="dbLoadAll()">↻</button><button class="btn-secondary-card" onclick="dbDropSelected()">🗑</button></div>
+        <div class="border border-amber-200 rounded-2xl overflow-auto max-h-36 bg-white/70"><table class="db-table"><thead><th>#</th><th>Usuario</th><th>Biografía</th><th></th></tr></thead><tbody id="db-tbody"><tr><td colspan="4" class="text-center py-3 text-slate-600 text-xs">Esperando conexión...</td></tr></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="dashboard-card card-sms">
+      <div class="card-header-custom"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg><span>Mensajería · SMS</span></div>
+      <div class="card-body">
+        <div class="stat-mini text-center"><p class="text-[10px]">mensajes enviados</p><p class="text-2xl font-bold text-cyan-700" id="sms-count">0</p></div>
+        <div class="flex items-center gap-1 bg-white/60 rounded-xl p-2 border border-white"><span class="text-xs font-medium text-slate-700">Para:</span><input id="sms-phone" class="bg-transparent outline-none flex-1 text-sm text-slate-800" placeholder="+52 844 123 4567"/></div>
+        <textarea id="sms-msg" rows="2" class="input-soft" placeholder="Escribe tu mensaje..."></textarea>
+        <button class="btn-card btn-sms w-full" onclick="smsSend()"> Enviar mensaje</button>
+        <div id="sms-inbox" class="flex flex-col gap-2 max-h-36 overflow-y-auto mt-1"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script type="module" src="js/config/firebase.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
