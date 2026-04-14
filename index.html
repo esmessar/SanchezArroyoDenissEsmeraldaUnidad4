@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>API Mashup | Dashboard Unificado</title>
+<title>API Mashup | Dashboard Unificado v2.0</title>
 <!-- frameworks -->
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -84,7 +84,7 @@
         <div class="stat-mini text-center mb-1"><span class="text-[10px]">documentos</span><p class="font-bold text-amber-700 text-xl" id="db-count">0</p></div>
         <div class="grid grid-cols-2 gap-2"><input class="input-soft" id="db-nombre" placeholder="👤 Nombre de usuario"/><input class="input-soft" id="db-bio" placeholder="Biografía"/></div>
         <div class="flex gap-2"><button class="btn-card btn-firestore flex-1" onclick="dbInsert()">➕ Guardar perfil</button><button class="btn-secondary-card" onclick="dbLoadAll()">↻</button><button class="btn-secondary-card" onclick="dbDropSelected()">🗑</button></div>
-        <div class="border border-amber-200 rounded-2xl overflow-auto max-h-36 bg-white/70"><table class="db-table"><thead><th>#</th><th>Usuario</th><th>Biografía</th><th></th></tr></thead><tbody id="db-tbody"><tr><td colspan="4" class="text-center py-3 text-slate-600 text-xs">Esperando conexión...</td></tr></tbody></table></div>
+        <div class="border border-amber-200 rounded-2xl overflow-auto max-h-36 bg-white/70"><table class="db-table"><thead><th>#</th><th>Usuario</th><th>Biografía</th><th></th></thead><tbody id="db-tbody"><td colspan="4" class="text-center py-3 text-slate-600 text-xs">Esperando conexión...</td></tr></tbody></table></div>
       </div>
     </div>
 
